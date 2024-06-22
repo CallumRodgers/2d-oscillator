@@ -14,6 +14,7 @@ public class SidePanel extends JPanel {
     private MainPanel mainPanel;
 
     private PropertyField mTF, kxTF, kyTF, x0TF, y0TF, vx0TF, vy0TF, bTF;
+    private JCheckBox dragCB;
 
     public SidePanel() {
         setBackground(BG);
@@ -68,7 +69,7 @@ public class SidePanel extends JPanel {
                 utiliza mais o processador.</html>
                 """);
 
-        JCheckBox dragCB = new JCheckBox("Arrasto Linear");
+        dragCB = new JCheckBox("Arrasto Linear");
         dragCB.setBackground(BG);
         dragCB.setFocusPainted(false);
         dragCB.addActionListener(e -> {
@@ -146,6 +147,7 @@ public class SidePanel extends JPanel {
         BidimensionalOscillator oscillator = new BidimensionalOscillator(m, kx, ky);
         oscillator.setR0(new Vector2d(x0, y0));
         oscillator.setV0(new Vector2d(vx0, vy0));
+        oscillator.setHasDrag(dragCB.isSelected());
         oscillator.setDrag((double) bTF.getValue());
         oscillator.prepare();
         mainPanel.setOscillator(oscillator);

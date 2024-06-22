@@ -6,6 +6,8 @@ import mechanics.physics.vectors.Vector2d;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.geom.*;
 
 public class MainPanel extends JPanel {
@@ -46,6 +48,12 @@ public class MainPanel extends JPanel {
         this.path = new Path2D.Double();
         this.time = new Time();
         createSprings();
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                reset();
+            }
+        });
     }
 
     @Override
@@ -183,8 +191,9 @@ public class MainPanel extends JPanel {
         double potentialEnergy = 0.5 * (oscillator.getKx() * x*x + oscillator.getKy() * y*y);
         double totalEnergy = kineticEnergy + potentialEnergy;
 
-        g2d.drawString("Energia Total: " + format(totalEnergy) + " J", 10, 10);
-        g2d.drawString("T + U: " + format(kineticEnergy) + " J + " + format(potentialEnergy) + " J", 10, 30);
+        int fontH = g2d.getFontMetrics().getHeight();
+        g2d.drawString("Energia Total: " + format(totalEnergy, "J"), 10, fontH);
+        g2d.drawString("T + U: " + format(kineticEnergy, "J") + " + " + format(potentialEnergy, "J"), 10, fontH * 2 + 10);
 
         if (firstDraw) {
             // Computing size variables.
@@ -307,24 +316,23 @@ public class MainPanel extends JPanel {
         fxB.setLength(4);
         fyB.setLength(4);
 
-        xB.append(format(x));
-        yB.append(format(y));
-        vxB.append(format(xVars[1]));
-        vyB.append(format(yVars[1]));
-        fxB.append(format(xVars[2]));
-        fyB.append(format(yVars[2]));
+        xB.append(format(x, "m"));
+        yB.append(format(y, "m"));
+        vxB.append(format(xVars[1], "m/s"));
+        vyB.append(format(yVars[1], "m/s"));
+        fxB.append(format(xVars[2], "N"));
+        fyB.append(format(yVars[2], "N"));
 
-        int fontH = g2d.getFontMetrics().getHeight();
         g2d.drawString(xB.toString(), 10, h - 2 * fontH);
         g2d.drawString(yB.toString(), 10, h - fontH);
-        g2d.drawString(vxB.toString(), 80, h - 2 * fontH);
-        g2d.drawString(vyB.toString(), 80, h - fontH);
-        g2d.drawString(fxB.toString(), 150, h - 2 * fontH);
-        g2d.drawString(fyB.toString(), 150, h - fontH);
+        g2d.drawString(vxB.toString(), 100, h - 2 * fontH);
+        g2d.drawString(vyB.toString(), 100, h - fontH);
+        g2d.drawString(fxB.toString(), 200, h - 2 * fontH);
+        g2d.drawString(fyB.toString(), 200, h - fontH);
 
         // Cleaning up.
         g2d.dispose();
-        SwingUtilities.invokeLater(this::optimizePath);
+        //SwingUtilities.invokeLater(this::optimizePath);
 
         lastX = x;
         lastY = y;
@@ -356,8 +364,29 @@ public class MainPanel extends JPanel {
         g.fill(trianglePath);
     }
 
-    private String format(double val) {
-        return String.format("%.2f", val);
+    private String format(double val, String unit) {
+        StringBuilder builder = new StringBuilder();
+        int log = (int) Math.floor(Math.log10(val));
+        String num = String.format("%.2f", val / Math.pow(1000, log / 3));
+        builder.append(num).append(" ");
+        if (log >= 9) {
+            builder.append("G");
+        } else if (log >= 6) {
+            builder.append("M");
+        } else if (log >= 3) {
+            builder.append("k");
+        }
+        if (log < -9) {
+            builder.append("p");
+        } else if (log < -6) {
+            builder.append("n");
+        } else if (log < -3) {
+            builder.append("µ");
+        } else if (log < 0) {
+            builder.append("m");
+        }
+        builder.append(unit);
+        return builder.toString();
     }
 
     private void adjustSprings() {
