@@ -1,12 +1,10 @@
 package mechanics;
 
-import mechanics.ui.*;
 import mechanics.ui.Window;
+import mechanics.ui.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
 
 public class Main {
 
@@ -38,20 +36,10 @@ public class Main {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
-                     UnsupportedLookAndFeelException e) {
-                throw new RuntimeException(e);
+                    UnsupportedLookAndFeelException e) {
+                System.err.println("Could not set look and feel: " + e);
             }
             startDefault();
         });
-        Path2D path2D = new Path2D.Double();
-        path2D.moveTo(2, 1);
-        path2D.lineTo(3.0, 1.0);
-        System.out.println(path2D.getBounds2D());
-        AffineTransform at = new AffineTransform();
-        at.scale(0.9, 1.0);
-        at.translate(path2D.getBounds2D().getX() * (1/0.9 - 1), 1.0);
-        System.out.println(at.toString());
-        path2D.transform(at);
-        System.out.println(path2D.getBounds2D());
     }
 }

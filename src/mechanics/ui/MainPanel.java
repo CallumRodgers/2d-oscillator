@@ -10,12 +10,16 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.*;
 
+import static java.lang.Math.*;
+
+/**
+ * Main drawing panel where the simulation occurs.
+ */
 public class MainPanel extends JPanel {
 
     private static final Color BG_COLOR = new Color(240, 240, 250);
     private static final Color PATH_COLOR = new Color(100, 100, 100);
     private static final Color AXIS_COLOR = new Color(50, 50, 50);
-
 
     private static final Stroke PATH_STROKE = new BasicStroke(1.5f);
     private static final Stroke DEFAULT_STROKE = new BasicStroke(1.0f);
@@ -23,11 +27,12 @@ public class MainPanel extends JPanel {
 
     private static final double SPRING_GAP = 30;
 
+    private final Ellipse2D object;
+    private final Path2D path;
+    private final Time time;
+
     private BidimensionalOscillator oscillator;
-    private Ellipse2D object;
-    private Path2D path;
-    private int objSize = 30;
-    private Time time;
+    private int objSize = 20;
 
     private Path2D spring1, spring2, spring3, spring4;
     private AffineTransform at1, at2, at3, at4;
@@ -39,7 +44,6 @@ public class MainPanel extends JPanel {
 
     public MainPanel() {
         setBackground(Color.WHITE);
-        setSize(300, 300);
         this.oscillator = new BidimensionalOscillator(1, 1, 1);
         oscillator.setR0(new Vector2d(100, 100));
         oscillator.setV0(Vector2d.NULL);
@@ -54,11 +58,6 @@ public class MainPanel extends JPanel {
                 reset();
             }
         });
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(300, 300);
     }
 
     public void setDrawSprings(boolean drawSprings) {
@@ -119,12 +118,10 @@ public class MainPanel extends JPanel {
 
     public void begin() {
         time.setFrequency(60);
-        time.setOnUpdate(() -> {
-            SwingUtilities.invokeLater(() -> {
-                repaint();
-                timePanel.getTimeLabel().setText(String.format("%.3f", time.now()));
-            });
-        });
+        time.setOnUpdate(() -> SwingUtilities.invokeLater(() -> {
+            repaint();
+            timePanel.getTimeLabel().setText(String.format("%.3f", time.now()));
+        }));
         time.start();
     }
 
@@ -144,20 +141,16 @@ public class MainPanel extends JPanel {
         reset();
     }
 
-    public BidimensionalOscillator getOscillator() {
-        return oscillator;
-    }
-
     private boolean firstDraw = true;
     private int w, h;
     private double cx, cy;
     private double lastX, lastY;
-    private StringBuilder xB = new StringBuilder("X: ");
-    private StringBuilder yB = new StringBuilder("Y: ");
-    private StringBuilder vxB = new StringBuilder("Vx: ");
-    private StringBuilder vyB = new StringBuilder("Vy: ");
-    private StringBuilder fxB = new StringBuilder("Fx: ");
-    private StringBuilder fyB = new StringBuilder("Fy: ");
+    private final StringBuilder xB = new StringBuilder("X: ");
+    private final StringBuilder yB = new StringBuilder("Y: ");
+    private final StringBuilder vxB = new StringBuilder("Vx: ");
+    private final StringBuilder vyB = new StringBuilder("Vy: ");
+    private final StringBuilder fxB = new StringBuilder("Fx: ");
+    private final StringBuilder fyB = new StringBuilder("Fy: ");
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -165,11 +158,12 @@ public class MainPanel extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+
         // Clearing out the entire panel with bg colour.
         g2d.setColor(BG_COLOR);
         g2d.fillRect(0, 0, w, h);
 
-        // Drawing axis.
+        // Drawing axes.
         g2d.setColor(AXIS_COLOR);
         g2d.drawLine(0, 0, w - 1, 0); // Top.
         g2d.drawLine(w - 1, 0, w - 1, h - 1); // Right.
@@ -280,16 +274,16 @@ public class MainPanel extends JPanel {
                 double x1, y1, x2, y2;
                 x1 = y1 = x2 = y2 = 0;
                 switch (i) {
-                    case 0, 1, 2 -> {
+                    case 0, 1, 2 -> { // Position vectors.
                         x2 = (i == 2) ? 0 : x;
                         y2 = (i == 1) ? 0 : y;
                     }
-                    case 3, 4, 5 -> {
+                    case 3, 4, 5 -> { // Velocity vectors.
                         x1 = x; y1 = y;
                         x2 = (i == 5) ? x : x + vx;
                         y2 = (i == 4) ? y : y + vy;
                     }
-                    case 6, 7, 8 -> {
+                    case 6, 7, 8 -> { // Force vectors.
                         x1 = x; y1 = y;
                         x2 = (i == 8) ? x : x + xVars[2];
                         y2 = (i == 7) ? y : y + yVars[2];
@@ -332,7 +326,6 @@ public class MainPanel extends JPanel {
 
         // Cleaning up.
         g2d.dispose();
-        //SwingUtilities.invokeLater(this::optimizePath);
 
         lastX = x;
         lastY = y;
@@ -366,24 +359,22 @@ public class MainPanel extends JPanel {
 
     private String format(double val, String unit) {
         StringBuilder builder = new StringBuilder();
-        int log = (int) Math.floor(Math.log10(val));
-        String num = String.format("%.2f", val / Math.pow(1000, log / 3));
-        builder.append(num).append(" ");
-        if (log >= 9) {
-            builder.append("G");
-        } else if (log >= 6) {
-            builder.append("M");
-        } else if (log >= 3) {
-            builder.append("k");
-        }
-        if (log < -9) {
-            builder.append("p");
-        } else if (log < -6) {
-            builder.append("n");
-        } else if (log < -3) {
-            builder.append("µ");
-        } else if (log < 0) {
-            builder.append("m");
+        double log10 = log10(abs(val));
+        String num;
+        if (log10 > 1) {
+            int log = (int) floor(log10);
+            num = String.format("%.2f", val / Math.pow(1000, log / 3));
+            builder.append(num).append(" ");
+            if (log >= 9) {
+                builder.append("G");
+            } else if (log >= 6) {
+                builder.append("M");
+            } else if (log >= 3) {
+                builder.append("k");
+            }
+        } else {
+            num = String.format("%.2f", round(val * 1000.0) / 1000.0);
+            builder.append(num).append(" ");
         }
         builder.append(unit);
         return builder.toString();
@@ -432,18 +423,5 @@ public class MainPanel extends JPanel {
         at2.setToIdentity();
         at3.setToIdentity();
         at4.setToIdentity();
-    }
-
-    private void optimizePath() {
-        PathIterator iterator = path.getPathIterator(new AffineTransform());
-        double[] coords = new double[6];
-        int count = 0;
-        while (!iterator.isDone()) {
-            if (iterator.currentSegment(coords) == PathIterator.SEG_LINETO) {
-                count++;
-            }
-            iterator.next();
-        }
-        System.out.println(count);
     }
 }

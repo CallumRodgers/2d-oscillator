@@ -76,16 +76,12 @@ public class BidimensionalOscillator {
 
         if (paramsX[A] == 0) {
             paramsX[DEL] = 0;
-        } else if (v0.v1 == 0) {
-            paramsX[DEL] = acos(r0.v1 / paramsX[A]);
         } else {
             paramsX[DEL] = atan(v0.v1 / (r0.v1 * paramsX[W0]));
         }
 
         if (paramsY[A] == 0) {
             paramsY[DEL] = 0;
-        } else if (v0.v2 == 0) {
-            paramsY[DEL] = acos(r0.v2 / paramsY[A]);
         } else {
             paramsY[DEL] = atan(v0.v2 / (r0.v2 * paramsY[W0]));
         }
@@ -110,7 +106,7 @@ public class BidimensionalOscillator {
             paramsY[CP] = r0.v2 - paramsY[CM];
         }
 
-        System.out.println(Arrays.toString(paramsX) + " " + Arrays.toString(paramsY));
+        System.out.println("X Parameters: " + Arrays.toString(paramsX) + "\nY Parameters: " + Arrays.toString(paramsY));
     }
 
     public double[] xVars(double t) {
@@ -124,7 +120,7 @@ public class BidimensionalOscillator {
             if (paramsX[BETA] < paramsX[W0]) {
                 double trigArg = paramsX[W1] * t - paramsX[DEL];
                 x = paramsX[A] * exp(-paramsX[BETA] * t) * cos(trigArg);
-                vx = paramsX[A] * exp(-paramsX[BETA] * t) * (paramsX[BETA] * cos(trigArg) + paramsX[W1] * sin(trigArg));
+                vx = -paramsX[A] * exp(-paramsX[BETA] * t) * (paramsX[BETA] * cos(trigArg) + paramsX[W1] * sin(trigArg));
             } else if (paramsX[BETA] == paramsX[W0]) {
                 double c1pc2t = (r0.v1 + (v0.v1 + paramsX[BETA] * r0.v1) * t);
                 x = exp(-paramsX[BETA] * t) * c1pc2t;
@@ -155,7 +151,7 @@ public class BidimensionalOscillator {
             if (paramsY[BETA] < paramsY[W0]) {
                 double trigArg = paramsY[W1] * t - paramsY[DEL];
                 y = paramsY[A] * exp(-paramsY[BETA] * t) * cos(trigArg);
-                vy = paramsY[A] * exp(-paramsY[BETA] * t) * (paramsY[BETA] * cos(trigArg) + paramsY[W1] * sin(trigArg));
+                vy = -paramsY[A] * exp(-paramsY[BETA] * t) * (paramsY[BETA] * cos(trigArg) + paramsY[W1] * sin(trigArg));
             } else if (paramsY[BETA] == paramsY[W0]) {
                 double c1pc2t = (r0.v1 + (v0.v1 + paramsY[BETA] * r0.v1) * t);
                 y = exp(-paramsY[BETA] * t) * c1pc2t;
@@ -195,7 +191,4 @@ public class BidimensionalOscillator {
         return ky;
     }
 
-    public double getB() {
-        return b;
-    }
 }

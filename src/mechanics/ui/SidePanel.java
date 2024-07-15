@@ -38,9 +38,9 @@ public class SidePanel extends JPanel {
         JLabel kxUL = new JLabel("N/m");
         JLabel kyUL = new JLabel("N/m");
 
-        mTF   = new PropertyField(0.001, 10000.0);
-        kxTF  = new PropertyField(0.001, 10000.0);
-        kyTF  = new PropertyField(0.001, 10000.0);
+        mTF   = new PropertyField(0.001, 100_000.0);
+        kxTF  = new PropertyField(0.001, 100_000.0);
+        kyTF  = new PropertyField(0.001, 100_000.0);
 
         JLabel configL = new JLabel("Configuração inicial:", JLabel.CENTER);
         JLabel x0L = new JLabel("x(0):");
@@ -60,9 +60,7 @@ public class SidePanel extends JPanel {
 
         JLabel freqL = new JLabel("Resolução:");
         JSpinner freqSpinner = new JSpinner(new SpinnerNumberModel(60, 1, 1000, 1));
-        freqSpinner.addChangeListener(e -> {
-            mainPanel.getTime().setFrequency((Integer) freqSpinner.getValue());
-        });
+        freqSpinner.addChangeListener(_ -> mainPanel.getTime().setFrequency((Integer) freqSpinner.getValue()));
         JLabel freqUL = new JLabel("Hz");
         JLabel freqDL = new JLabel("""
                 <html>Uma taxa de atualização maior deixa as curvas mais precisas, mas em compensação
@@ -72,18 +70,14 @@ public class SidePanel extends JPanel {
         dragCB = new JCheckBox("Arrasto Linear");
         dragCB.setBackground(BG);
         dragCB.setFocusPainted(false);
-        dragCB.addActionListener(e -> {
-            if (dragCB.isSelected()) {
-                bTF.setEnabled(true);
-            } else {
-                bTF.setEnabled(false);
-            }
+        dragCB.addActionListener(_ -> {
+            bTF.setEnabled(dragCB.isSelected());
             applyProperties();
         });
 
         JLabel bL = new JLabel("b:");
 
-        bTF = new PropertyField(0.0, 1000.0);
+        bTF = new PropertyField(0.0, 10_000.0);
         bTF.setEnabled(false);
 
         JLabel bUL = new JLabel("kg/s");
@@ -122,6 +116,14 @@ public class SidePanel extends JPanel {
         add(bL, "cell 0 12, grow");
         add(bTF, "cell 1 12, grow");
         add(bUL, "cell 2 12, grow");
+
+        for (Component c : getComponents()) {
+            if (c instanceof JLabel l) {
+                l.setForeground(Color.BLACK);
+            } else if (c instanceof JCheckBox b) {
+                b.setForeground(Color.BLACK);
+            }
+        }
     }
 
     private void initPropertyFields() {
@@ -156,7 +158,7 @@ public class SidePanel extends JPanel {
     private class PropertyField extends JSpinner {
         public PropertyField(double min, double max) {
             setModel(new SpinnerNumberModel(1, min, max, 0.001));
-            addChangeListener(e -> {
+            addChangeListener(_ -> {
                 if (mainPanel != null) {
                     applyProperties();
                 }
