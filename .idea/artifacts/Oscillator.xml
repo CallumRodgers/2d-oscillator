@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jlink" name="Oscillator">
+    <output-path>$PROJECT_DIR$/out/artifacts/Oscillator</output-path>
+    <root id="root">
+      <element id="module-output" name="Oscillator" />
+      <element id="library" level="project" name="miglayout.swing" />
+    </root>
+  </artifact>
+</component>
