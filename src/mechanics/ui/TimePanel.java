@@ -39,9 +39,9 @@ public class TimePanel extends JPanel {
         JButton resetButton = new JButton("Resetar");
         JButton pauseButton = new JButton("Pausar");
 
-        resetButton.addActionListener(_ -> mainPanel.reset());
+        resetButton.addActionListener(e -> mainPanel.reset());
         resetButton.setFocusPainted(false);
-        pauseButton.addActionListener(_ -> {
+        pauseButton.addActionListener(e -> {
             Time t = mainPanel.getTime();
             if (t.isRunning()) {
                 pauseButton.setText("Resumir");
@@ -55,11 +55,11 @@ public class TimePanel extends JPanel {
 
         JLabel speedL = new JLabel("Velocidade:");
         JSpinner speedTF = new JSpinner(new SpinnerNumberModel(1.0, 0.001, 1000.0, 0.1));
-        speedTF.addChangeListener(_ -> mainPanel.getTime().setSpeed((Double) speedTF.getValue()));
+        speedTF.addChangeListener(e -> mainPanel.getTime().setSpeed((Double) speedTF.getValue()));
         JLabel speedUL = new JLabel("x");
 
         JButton githubButton = new JButton("GitHub");
-        githubButton.addActionListener(_ -> {
+        githubButton.addActionListener(l -> {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 try {
                     Desktop.getDesktop().browse(new URI("https://github.com/CallumRodgers/2d-oscillator"));
@@ -70,7 +70,7 @@ public class TimePanel extends JPanel {
         });
 
         JButton aboutButton = new JButton("Como Usar");
-        aboutButton.addActionListener(_ -> {
+        aboutButton.addActionListener(e -> {
             if (dialog != null) return;
             dialog = new AboutDialog((JFrame) TimePanel.this.getParent().getParent());
             dialog.setVisible(true);
@@ -117,7 +117,7 @@ public class TimePanel extends JPanel {
     public class PropertyField extends JSpinner {
         public PropertyField(double min, double max) {
             setModel(new SpinnerNumberModel(1, min, max, 0.01));
-            addChangeListener(_ -> {
+            addChangeListener(e -> {
                 if (mainPanel != null) {
                     applyProperties();
                 }

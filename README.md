@@ -5,14 +5,14 @@ do programa. Sinta-se à vontade para reportar erros, explorar o código, ou at�
 Pull Requests caso queira ampliar o software.
 
 Sobre o projeto: o programa simula um corpo preso a quatro molas (uma de cada lado), e qual o movimento
-que ela descreve ao longo do tempo, podendo variar a massa do corpo, sua posição e velocidade iniciais, o
+que ele descreve ao longo do tempo, podendo variar a massa do corpo, sua posição e velocidade iniciais, o
 quão "fortes" são as molas, e até mesmo uma situação com arrasto linear (como um corpo sendo freado por atravessar
 um fluido). Além disso, você pode visualizar exatamente a força total agindo sobre o corpo a cada instante, 
 assim como sua velocidade e posição.
 
 # Instalação
 
-## Instale a versão 22+ do Java:
+## Instale a versão mais recente do Java:
 
 ### Windows & MacOS:
 

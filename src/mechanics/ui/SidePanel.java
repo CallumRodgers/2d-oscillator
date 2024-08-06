@@ -60,7 +60,7 @@ public class SidePanel extends JPanel {
 
         JLabel freqL = new JLabel("Resolução:");
         JSpinner freqSpinner = new JSpinner(new SpinnerNumberModel(60, 1, 1000, 1));
-        freqSpinner.addChangeListener(_ -> mainPanel.getTime().setFrequency((Integer) freqSpinner.getValue()));
+        freqSpinner.addChangeListener(e -> mainPanel.getTime().setFrequency((Integer) freqSpinner.getValue()));
         JLabel freqUL = new JLabel("Hz");
         JLabel freqDL = new JLabel("""
                 <html>Uma taxa de atualização maior deixa as curvas mais precisas, mas em compensação
@@ -70,7 +70,7 @@ public class SidePanel extends JPanel {
         dragCB = new JCheckBox("Arrasto Linear");
         dragCB.setBackground(BG);
         dragCB.setFocusPainted(false);
-        dragCB.addActionListener(_ -> {
+        dragCB.addActionListener(e -> {
             bTF.setEnabled(dragCB.isSelected());
             applyProperties();
         });
@@ -158,7 +158,7 @@ public class SidePanel extends JPanel {
     private class PropertyField extends JSpinner {
         public PropertyField(double min, double max) {
             setModel(new SpinnerNumberModel(1, min, max, 0.001));
-            addChangeListener(_ -> {
+            addChangeListener(e -> {
                 if (mainPanel != null) {
                     applyProperties();
                 }

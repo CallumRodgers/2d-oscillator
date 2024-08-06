@@ -21,7 +21,7 @@ public class ViewPanel extends JPanel {
 
         CheckBox springCheckBox = new CheckBox("Mostrar Molas");
         springCheckBox.setSelected(true);
-        springCheckBox.addActionListener(_ -> mainPanel.setDrawSprings(springCheckBox.isSelected()));
+        springCheckBox.addActionListener(e -> mainPanel.setDrawSprings(springCheckBox.isSelected()));
 
         JLabel posLabel = new JLabel("Posição:");
         CheckBox rCB = new CheckBox("r");
@@ -38,19 +38,19 @@ public class ViewPanel extends JPanel {
         CheckBox fxCB = new CheckBox("<html>F<sub>x</sub></html>");
         CheckBox fyCB = new CheckBox("<html>F<sub>y</sub></html>");
 
-        rCB.addActionListener(_ -> mainPanel.setDrawVector(0, rCB.isSelected()));
-        rxCB.addActionListener(_ -> mainPanel.setDrawVector(1, rxCB.isSelected()));
-        ryCB.addActionListener(_ -> mainPanel.setDrawVector(2, ryCB.isSelected()));
-        vCB.addActionListener(_ -> mainPanel.setDrawVector(3, vCB.isSelected()));
-        vxCB.addActionListener(_ -> mainPanel.setDrawVector(4, vxCB.isSelected()));
-        vyCB.addActionListener(_ -> mainPanel.setDrawVector(5, vyCB.isSelected()));
-        fCB.addActionListener(_ -> mainPanel.setDrawVector(6, fCB.isSelected()));
-        fxCB.addActionListener(_ -> mainPanel.setDrawVector(7, fxCB.isSelected()));
-        fyCB.addActionListener(_ -> mainPanel.setDrawVector(8, fyCB.isSelected()));
+        rCB.addActionListener(e -> mainPanel.setDrawVector(0, rCB.isSelected()));
+        rxCB.addActionListener(e -> mainPanel.setDrawVector(1, rxCB.isSelected()));
+        ryCB.addActionListener(e -> mainPanel.setDrawVector(2, ryCB.isSelected()));
+        vCB.addActionListener(e -> mainPanel.setDrawVector(3, vCB.isSelected()));
+        vxCB.addActionListener(e -> mainPanel.setDrawVector(4, vxCB.isSelected()));
+        vyCB.addActionListener(e -> mainPanel.setDrawVector(5, vyCB.isSelected()));
+        fCB.addActionListener(e -> mainPanel.setDrawVector(6, fCB.isSelected()));
+        fxCB.addActionListener(e -> mainPanel.setDrawVector(7, fxCB.isSelected()));
+        fyCB.addActionListener(e -> mainPanel.setDrawVector(8, fyCB.isSelected()));
 
         JLabel sizeLabel = new JLabel("Diâmetro da bola:");
         JSpinner sizeTF = new JSpinner(new SpinnerNumberModel(20, 1, 100, 1));
-        sizeTF.addChangeListener(_ -> mainPanel.setObjSize((Integer) sizeTF.getValue()));
+        sizeTF.addChangeListener(e -> mainPanel.setObjSize((Integer) sizeTF.getValue()));
         JLabel sizeUL = new JLabel("m");
 
         add(viewLabel, "cell 0 0, wrap, spanx");
