@@ -30,8 +30,7 @@ $ `sudo pacman -S --needed jre-openjdk`
 
 ## Baixe o arquivo .jar
 
-Faça o download do arquivo executável, disponível aqui no GitHub, na aba "Releases", ou em:
-https://github.com/CallumRodgers/2d-oscillator/releases/tag/v1.0.0
+Faça o download do arquivo executável, disponível aqui no GitHub, na aba [Releases](https://github.com/CallumRodgers/2d-oscillator/releases/tag/v1.0.0)
 
 ## Execute o jar
 
