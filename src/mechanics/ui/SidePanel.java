@@ -127,7 +127,7 @@ public class SidePanel extends JPanel {
     }
 
     private void initPropertyFields() {
-        double[] config = BidimensionalOscillator.DEFAULT_CONFIG;
+        double[] config = BidimensionalOscillator.CONFIGURATION;
         mTF.setValue(config[0]);
         kxTF.setValue(config[1]);
         kyTF.setValue(config[2]);

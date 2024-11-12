@@ -48,8 +48,8 @@ public class MainPanel extends JPanel {
         oscillator.setR0(new Vector2d(100, 100));
         oscillator.setV0(Vector2d.NULL);
         oscillator.prepare();
-        this.object = new Ellipse2D.Double();
-        this.path = new Path2D.Double();
+        this.object = new Ellipse2D.Float();
+        this.path = new Path2D.Float();
         this.time = new Time();
         createSprings();
         addComponentListener(new ComponentAdapter() {
@@ -65,10 +65,10 @@ public class MainPanel extends JPanel {
     }
 
     private void createSprings() {
-        this.spring1 = new Path2D.Double();
-        this.spring2 = new Path2D.Double();
-        this.spring3 = new Path2D.Double();
-        this.spring4 = new Path2D.Double();
+        this.spring1 = new Path2D.Float();
+        this.spring2 = new Path2D.Float();
+        this.spring3 = new Path2D.Float();
+        this.spring4 = new Path2D.Float();
 
         // Moving springs to origin.
         spring1.moveTo(0, 0);
@@ -388,8 +388,8 @@ public class MainPanel extends JPanel {
         at2.rotate(Math.PI / 2);
         at4.rotate(Math.PI / 2);
 
-        double ampX = oscillator.getParamsX()[0];
-        double ampY = oscillator.getParamsY()[0];
+        double ampX = hypot(oscillator.getParamsX()[0], oscillator.getParamsX()[1]);
+        double ampY = hypot(oscillator.getParamsY()[0], oscillator.getParamsY()[1]);
 
         double s1w = spring1.getBounds2D().getWidth();
         double s1scale = (ampX + SPRING_GAP) / s1w;

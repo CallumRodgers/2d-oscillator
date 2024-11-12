@@ -2,31 +2,28 @@ package mechanics;
 
 import mechanics.physics.vectors.Vector2d;
 
-import java.util.Arrays;
-
 import static java.lang.Math.*;
 
 public class BidimensionalOscillator {
 
-    public static final double[] DEFAULT_CONFIG = {
-            1.0, // m
-            1.0, // kx
-            1.0, // ky
-            100.0, // x0
-            100.0, // y0
-            0.0, // vx0
-            0.0, // vy0
-            0.0, // b
-    };
-
     public static final int A = 0;
-    public static final int W0 = 1;
-    public static final int DEL = 2;
+    public static final int B = 1;
+    public static final int W0 = 2;
     public static final int W1 = 3;
     public static final int BETA = 4;
     public static final int WP = 5;
     public static final int CP = 6;
     public static final int CM = 7;
+    public static final double[] CONFIGURATION = {
+            1.0,
+            1.0,
+            1.0,
+            100.0,
+            100.0,
+            0.0,
+            0.0,
+            0.0,
+    };
 
     private final double m;
     private final double kx, ky;
@@ -70,21 +67,13 @@ public class BidimensionalOscillator {
         paramsX[W0] = sqrt(kx / m);
         paramsY[W0] = sqrt(ky / m);
 
-        // Computing amplitude A: A² = x² + (vx / w0)²
-        paramsX[A] = hypot(r0.v1, (v0.v1 / paramsX[W0]));
-        paramsY[A] = hypot(r0.v2, (v0.v2 / paramsY[W0]));
+        // Computing coefficient A.
+        paramsX[A] = v0.v1 / paramsX[W0];
+        paramsY[A] = v0.v2 / paramsY[W0];
 
-        if (paramsX[A] == 0) {
-            paramsX[DEL] = 0;
-        } else {
-            paramsX[DEL] = atan(v0.v1 / (r0.v1 * paramsX[W0]));
-        }
-
-        if (paramsY[A] == 0) {
-            paramsY[DEL] = 0;
-        } else {
-            paramsY[DEL] = atan(v0.v2 / (r0.v2 * paramsY[W0]));
-        }
+        // Computing coefficient B.
+        paramsX[B] = r0.v1;
+        paramsY[B] = r0.v2;
 
         // Computing drag constants.
         if (hasDrag && b > 0) {
@@ -106,21 +95,25 @@ public class BidimensionalOscillator {
             paramsY[CP] = r0.v2 - paramsY[CM];
         }
 
-        System.out.println("X Parameters: " + Arrays.toString(paramsX) + "\nY Parameters: " + Arrays.toString(paramsY));
+        System.out.println("---------------------------------");
+        System.out.println("X Parameters:\n" + paramsToString(paramsX) + "\n\nY Parameters: " + paramsToString(paramsY));
+        System.out.println("---------------------------------");
     }
 
     public double[] xVars(double t) {
         double x, vx, fx;
         if (!hasDrag || b == 0) {
-            double trigArg = paramsX[W0] * t - paramsX[DEL];
-            x = paramsX[A] * cos(trigArg);
-            vx = -paramsX[A] * paramsX[W0] * sin(trigArg);
+            double trigArg = paramsX[W0] * t;
+            double sin = sin(trigArg), cos = cos(trigArg);
+            x = paramsX[A] * sin + paramsX[B] * cos;
+            vx = paramsX[W0] * (paramsX[A] * cos - paramsX[B] * sin);
             fx = -kx * x;
         } else {
             if (paramsX[BETA] < paramsX[W0]) {
-                double trigArg = paramsX[W1] * t - paramsX[DEL];
-                x = paramsX[A] * exp(-paramsX[BETA] * t) * cos(trigArg);
-                vx = -paramsX[A] * exp(-paramsX[BETA] * t) * (paramsX[BETA] * cos(trigArg) + paramsX[W1] * sin(trigArg));
+                double trigArg = paramsX[W1] * t;
+                double sin = sin(trigArg), cos = cos(trigArg);
+                x = exp(-paramsX[BETA] * t) * (paramsX[A] * sin + paramsX[B] * cos);
+                vx = -paramsX[BETA] * x + exp(-paramsX[BETA] * t) * (paramsX[A] * cos - paramsX[B] * sin);
             } else if (paramsX[BETA] == paramsX[W0]) {
                 double c1pc2t = (r0.v1 + (v0.v1 + paramsX[BETA] * r0.v1) * t);
                 x = exp(-paramsX[BETA] * t) * c1pc2t;
@@ -143,15 +136,17 @@ public class BidimensionalOscillator {
     public double[] yVars(double t) {
         double y, vy, fy;
         if (!hasDrag || b == 0) {
-            double trigArg = paramsY[W0] * t - paramsY[DEL];
-            y = paramsY[A] * cos(trigArg);
-            vy = -paramsY[A] * paramsY[W0] * sin(trigArg);
+            double trigArg = paramsY[W0] * t;
+            double sin = sin(trigArg), cos = cos(trigArg);
+            y = paramsY[A] * sin + paramsY[B] * cos;
+            vy = paramsY[W0] * (paramsY[A] * cos - paramsY[B] * sin);
             fy = -kx * y;
         } else {
             if (paramsY[BETA] < paramsY[W0]) {
-                double trigArg = paramsY[W1] * t - paramsY[DEL];
-                y = paramsY[A] * exp(-paramsY[BETA] * t) * cos(trigArg);
-                vy = -paramsY[A] * exp(-paramsY[BETA] * t) * (paramsY[BETA] * cos(trigArg) + paramsY[W1] * sin(trigArg));
+                double trigArg = paramsY[W1] * t;
+                double sin = sin(trigArg), cos = cos(trigArg);
+                y = exp(-paramsY[BETA] * t) * (paramsY[A] * sin + paramsY[B] * cos);
+                vy = -paramsY[BETA] * y + exp(-paramsY[BETA] * t) * (paramsY[A] * cos - paramsY[B] * sin);
             } else if (paramsY[BETA] == paramsY[W0]) {
                 double c1pc2t = (r0.v1 + (v0.v1 + paramsY[BETA] * r0.v1) * t);
                 y = exp(-paramsY[BETA] * t) * c1pc2t;
@@ -189,6 +184,17 @@ public class BidimensionalOscillator {
 
     public double getKy() {
         return ky;
+    }
+
+    private String paramsToString(double[] params) {
+        return "A (const): " + params[A] + "\n" +
+                "B (const.): " + params[B] + "\n" +
+                "W0: " + params[W0] + "\n" +
+                "Beta = b/2m: " + params[BETA] + "\n" +
+                "W1 = sqrt(W0² - Beta²): " + params[W1] + "\n" +
+                "W': " + params[WP] + "\n" +
+                "C+ (const): " + params[CP] + "\n" +
+                "C- (const): " + params[CM];
     }
 
 }
